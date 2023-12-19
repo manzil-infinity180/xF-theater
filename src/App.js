@@ -55,10 +55,11 @@ export default function App() {
   const [watched, setWatched] = useState([]);
   const [loading,setLoading] = useState(false);
   const [error,setError] = useState('');
+  const [query, setQuery] = useState("");
 
 
   const KEY = 'd21d995b';
-  const query ='avengers';
+  const tempquery ='avengers';
   // this type of  code inside the render  logic will cause and infinite re-render of code and prevent for that we 
   // use ---> useEffect which contain the function and an dependency array 
   // fetch(`https://www.omdbapi.com/?i=tt3896198&apikey=${KEY}&s=avengers`).then((res)=> res.json()).then((data)=> console.log(data));
@@ -66,11 +67,24 @@ export default function App() {
   // useEffect - which takes 2 arguments first is function and second is dependency array 
   // here is [] means only run on first mount 
   useEffect(function(){
+     console.log("A");
+  },[]);
+  useEffect(function(){
+    console.log("B");
+  });
+  console.log("C");
+  useEffect(function(){
+    console.log("D")
+  },[query]);
+
+  useEffect(function(){
    
 
       async function fetchMovie(){
         try{
         setLoading(true);
+        setError("");
+        
         const res = await fetch(`https://www.omdbapi.com/?i=tt3896198&apikey=${KEY}&s=${query}`);
         // internet connectivity (poor)
         if(!res.ok){
@@ -94,14 +108,19 @@ export default function App() {
         setLoading(false);
       }
     }
+    if(query.length < 3){
+      setMovies([]);
+      setError("");
+      return;
+    }
     fetchMovie();
-  },[]);
+  },[query]);
 
   return (
     <>
       <Navbar>
           <Logo />
-          <Search />
+          <Search query={query} setQuery={setQuery}/>
           <NumResult movies={movies}/>
       </Navbar>
 
@@ -138,8 +157,8 @@ function Navbar ({children}){
       </nav>
         );
   }
-function Search(){
-  const [query, setQuery] = useState("");
+function Search({query,setQuery}){
+  
   return <input
   className="search"
   type="text"
