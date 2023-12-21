@@ -16,9 +16,9 @@ StarRating.propTypes ={
   size: PropTypes.number,
   message: PropTypes.array,
   className:PropTypes.string,
-  onSetMovieRating : PropTypes.func,
+  // onSetMovieRating : PropTypes.func,
 };
-export default function StarRating({maxRating =5,color="#fcc419",size=48,className,message=[],onSetMovieRating,}){
+export default function StarRating({maxRating =5,color="#fcc419",size=48,className,message=[]}){
   const [rating,setRating] = useState(0);
 
   const [tempRating,setTempRating] = useState(0);
@@ -31,7 +31,7 @@ export default function StarRating({maxRating =5,color="#fcc419",size=48,classNa
 
   function handleRating(rating){
     setRating(rating);
-    onSetMovieRating(rating);
+    // onSetMovieRating(rating);
   }
 
   return (<>
