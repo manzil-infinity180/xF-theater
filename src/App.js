@@ -136,6 +136,8 @@ export default function App() {
     fetchMovie();
   },[query]);
 
+  
+
   return (
     <>
       <Navbar>
@@ -218,6 +220,18 @@ function handleAddWatchedMovieList(){
     fetchMovieDetails();
 
   },[selectedId])
+
+  useEffect(function(){
+    if(!title) return;
+    document.title = `Movie | ${title}`;
+
+    // cleanup function 
+    return function(){
+      document.title = 'XfThreater';
+    }
+    
+  },[title]);
+
   return <div className="details">
     {loading ? <Loader /> : 
     <>
