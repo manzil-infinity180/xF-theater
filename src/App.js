@@ -100,12 +100,13 @@ export default function App() {
   }
 
   useEffect(function(){
+    const controller = new AbortController();
       async function fetchMovie(){
         try{
         setLoading(true);
         setError("");
         
-        const res = await fetch(`https://www.omdbapi.com/?apikey=${KEY}&s=${query}`);
+        const res = await fetch(`https://www.omdbapi.com/?apikey=${KEY}&s=${query}`,{signal:controller.signal});
         // internet connectivity (poor)
         if(!res.ok){
           throw new Error('Something went wrong with fetching movies');
@@ -119,11 +120,15 @@ export default function App() {
         }
         setMovies(data.Search);
         console.log(data.Search);
+        setError("");
         
         // setLoading(false);
       }catch(err){
            console.error(err.message);
-           setError(err.message);
+           if(err !=='AbortError'){
+
+             setError(err.message);
+           }
       }finally{
         setLoading(false);
       }
@@ -134,6 +139,9 @@ export default function App() {
       return;
     }
     fetchMovie();
+    return function(){
+      controller.abort();
+    };
   },[query]);
 
   
@@ -202,6 +210,7 @@ function handleAddWatchedMovieList(){
   onCloseMovie();
 }
   useEffect(function(){
+    
     async function fetchMovieDetails(){
       try{
         
