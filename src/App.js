@@ -56,7 +56,7 @@ export default function App() {
   const [loading,setLoading] = useState(false);
   const [error,setError] = useState('');
   const [query, setQuery] = useState("");
-  const [selectedId,setSelectedId]=useState("tt5592584");
+  const [selectedId,setSelectedId]=useState("");
 
 
 
@@ -70,15 +70,18 @@ export default function App() {
   // here is [] means only run on first mount 
   // * useEffect - with different ** Dependency array **
   /* 
+  // on mount 
   useEffect(function(){
      console.log("A");
   },[]);
+
   useEffect(function(){
     console.log("B");
   });
 
   console.log("C");
 
+   // on touching query 
   useEffect(function(){
     console.log("D")
   },[query]);
@@ -98,6 +101,7 @@ export default function App() {
   function handleDeleteId(id){
     setWatched((watched)=> watched.filter((movie)=>movie.imbdId!==id))
   }
+  
 
   useEffect(function(){
     const controller = new AbortController();
@@ -138,7 +142,9 @@ export default function App() {
       setError("");
       return;
     }
+    handleCloseMovie(); // used for closing the moviedDetail if going to search the new movie 
     fetchMovie();
+    // abortController for cleanup the data fetching 
     return function(){
       controller.abort();
     };
@@ -209,18 +215,28 @@ function handleAddWatchedMovieList(){
   addWatchedMovie(watched);
   onCloseMovie();
 }
+useEffect(function(){
+  function callBack(e){
+    if(e.code==='Escape'){
+      onCloseMovie();
+      console.log("Closing..."+e.code)
+    }
+  }
+  document.addEventListener('keydown',callBack);
+
+  return function(){
+    document.removeEventListener('keydown',callBack);
+  }
+},[onCloseMovie]);
   useEffect(function(){
-    
     async function fetchMovieDetails(){
       try{
-        
         setLoading(true);
          const res = await fetch(`https://www.omdbapi.com/?apikey=${KEY}&i=${selectedId}`);
          const data = await res.json();
          console.log(data);
          setLoading(false);
          setMovie(data);
-
       }catch(err){
          console.log(err.message);
       }
@@ -240,6 +256,8 @@ function handleAddWatchedMovieList(){
     }
     
   },[title]);
+
+  
 
   return <div className="details">
     {loading ? <Loader /> : 
@@ -313,7 +331,7 @@ function Search({query,setQuery}){
 function Logo(){
   return <div className="logo">
   <span role="img">🍿</span>
-  <h1>usePopcorn</h1>
+  <h1>Xf Threater</h1>
 </div>
 }
 function NumResult({movies}){
