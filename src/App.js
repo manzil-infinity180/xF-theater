@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import StarRating from "./StarRating";
+import { useMovie } from "./useMovie";
 const tempMovieData = [
   {
     imdbID: "tt1375666",
@@ -51,21 +52,16 @@ const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
 export default function App() {
-  const [movies, setMovies] = useState([]);
-  // const [watched, setWatched] = useState([]);
-  const [loading,setLoading] = useState(false);
-  const [error,setError] = useState('');
+  
   const [query, setQuery] = useState("");
   const [selectedId,setSelectedId]=useState("");
-
+  
+  // const [watched, setWatched] = useState([]);
   // useState() with the callback function (must be a pure function with no argument function)
   const [watched,setWatched] = useState(function(){
     const storedData = localStorage.getItem('watched');
     return JSON.parse(storedData);
   })
-
-
-
   const KEY = 'd21d995b';
   const tempquery ='avengers';
   // this type of  code inside the render  logic will cause and infinite re-render of code and prevent for that we 
@@ -95,6 +91,9 @@ export default function App() {
   Output : C A B D (first it will render and browser paint then Effect will trigger)
   */
 
+  // custom hook (useMovie)
+  const {movies,loading,error} = useMovie(query);
+
   function handleSelectedId(id){
    setSelectedId(selectedId => selectedId === id ? null : id);
   }
@@ -113,52 +112,7 @@ export default function App() {
    localStorage.setItem('watched',JSON.stringify(watched));
   },[watched])
   
-  useEffect(function(){
-    const controller = new AbortController();
-      async function fetchMovie(){
-        try{
-        setLoading(true);
-        setError("");
-        
-        const res = await fetch(`https://www.omdbapi.com/?apikey=${KEY}&s=${query}`,{signal:controller.signal});
-        // internet connectivity (poor)
-        if(!res.ok){
-          throw new Error('Something went wrong with fetching movies');
-        }
-        
-
-        const data = await res.json();
-        // no movies found 
-        if(data.Response ==='False') {
-          throw new Error(data.Error);
-        }
-        setMovies(data.Search);
-        console.log(data.Search);
-        setError("");
-        
-        // setLoading(false);
-      }catch(err){
-           console.error(err.message);
-           if(err !=='AbortError'){
-
-             setError(err.message);
-           }
-      }finally{
-        setLoading(false);
-      }
-    }
-    if(query.length < 3){
-      setMovies([]);
-      setError("");
-      return;
-    }
-    handleCloseMovie(); // used for closing the moviedDetail if going to search the new movie 
-    fetchMovie();
-    // abortController for cleanup the data fetching 
-    return function(){
-      controller.abort();
-    };
-  },[query]);
+ 
 
   
 
@@ -201,16 +155,22 @@ function MovieDetails({selectedId,onCloseMovie,addWatchedMovie,watched}){
   const [userRating,setUserRating] = useState('');
   const isWatched = watched.map((movie)=> movie.imbdId).includes(selectedId);
 
+  const countRef = useRef(0);
+
+  useEffect(function(){
+     countRef.current = countRef.current + 1;
+  },[userRating]);
+
   const KEY = 'd21d995b'; // omdb api key 
   const {Title:title,
     Year:year,
     Poster: poster,Runtime: runtime,
-  imdbRating,
-  Plot:plot,
-  Released: released,
-  Actors: actors,
-  Director: director,
-Genre: genre} = movie;
+    imdbRating,
+    Plot:plot,
+    Released: released,
+    Actors: actors,
+    Director: director,
+    Genre: genre} = movie;
 
 function handleAddWatchedMovieList(){
   const watched = {
@@ -221,6 +181,7 @@ function handleAddWatchedMovieList(){
     imdbRating : Number(imdbRating),
     runtime: Number(runtime.split(' ').at(0)),
     userRating,
+    countRatingDecision: countRef.current,
   }
   addWatchedMovie(watched);
   onCloseMovie();
