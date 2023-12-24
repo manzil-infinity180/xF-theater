@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import StarRating from "./StarRating";
 import { useMovie } from "./useMovie";
 import { useLocalStorageState } from "./useLocalStorageState";
+import { useKey } from "./useKey";
 const tempMovieData = [
   {
     imdbID: "tt1375666",
@@ -185,21 +186,9 @@ function handleAddWatchedMovieList(){
   addWatchedMovie(watched);
   onCloseMovie();
 }
-useEffect(function(){
-  function callBack(e){
-    if(e.code==='Escape'){
-      onCloseMovie();
-      console.log("Closing..."+e.code)
-    }
-  }
-  // addEventListener and removeEventListener 
-  // useEffect 
-  document.addEventListener('keydown',callBack);
- // clean up function 
-  return function(){
-    document.removeEventListener('keydown',callBack);
-  }
-},[onCloseMovie]);
+// Close the selected movie on key pressed -> escape key
+ useKey('Escape',onCloseMovie);
+
 // movie data fetching 
   useEffect(function(){
     async function fetchMovieDetails(){
@@ -308,22 +297,29 @@ function Search({query,setQuery}){
   
   // clicking enter key it will focus and delete the contain from the search bar 
 
-  useEffect(function(){
-    function callBack(e){
-      // selecting the active element (dom)
-      if(document.activeElement === inputEl.current) return;
-      if(e.code==='Enter'){
-        setQuery("");
+  useKey('Enter',function(){
+    if(document.activeElement === inputEl.current) return;
+    setQuery("");
         inputEl.current.focus();
-      }
-    }
-    document.addEventListener('keypress',callBack);
+  })
 
-    return ()=>{
-      document.removeEventListener('keypress',callBack);
-    }
+  // useEffect(function(){
+  //   function callBack(e){
+  //     // selecting the active element (dom)
+     
+  //     if(e.code==='Enter'){
+  //       if(document.activeElement === inputEl.current) return;
+  //       setQuery("");
+  //       inputEl.current.focus();
+  //     }
+  //   }
+  //   document.addEventListener('keypress',callBack);
 
-  },[setQuery]);
+  //   return ()=>{
+  //     document.removeEventListener('keypress',callBack);
+  //   }
+
+  // },[setQuery]);
   
   
 
