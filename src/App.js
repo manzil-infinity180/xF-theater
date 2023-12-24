@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import StarRating from "./StarRating";
 import { useMovie } from "./useMovie";
+import { useLocalStorageState } from "./useLocalStorageState";
 const tempMovieData = [
   {
     imdbID: "tt1375666",
@@ -58,10 +59,11 @@ export default function App() {
   
   // const [watched, setWatched] = useState([]);
   // useState() with the callback function (must be a pure function with no argument function)
-  const [watched,setWatched] = useState(function(){
-    const storedData = localStorage.getItem('watched');
-    return JSON.parse(storedData);
-  })
+
+  // useLocalStorageState custom hooks 
+  const [watched,setWatched] = useLocalStorageState([],'watched');
+
+  
   const KEY = 'd21d995b';
   const tempquery ='avengers';
   // this type of  code inside the render  logic will cause and infinite re-render of code and prevent for that we 
@@ -107,10 +109,7 @@ export default function App() {
     setWatched((watched)=> watched.filter((movie)=>movie.imbdId!==id))
   }
   
-  //  adding the item into the local storage (watched list)
-  useEffect(function(){
-   localStorage.setItem('watched',JSON.stringify(watched));
-  },[watched])
+  
   
  
 
