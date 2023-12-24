@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import StarRating from "./StarRating";
 const tempMovieData = [
   {
@@ -52,11 +52,17 @@ const average = (arr) =>
 
 export default function App() {
   const [movies, setMovies] = useState([]);
-  const [watched, setWatched] = useState([]);
+  // const [watched, setWatched] = useState([]);
   const [loading,setLoading] = useState(false);
   const [error,setError] = useState('');
   const [query, setQuery] = useState("");
   const [selectedId,setSelectedId]=useState("");
+
+  // useState() with the callback function (must be a pure function with no argument function)
+  const [watched,setWatched] = useState(function(){
+    const storedData = localStorage.getItem('watched');
+    return JSON.parse(storedData);
+  })
 
 
 
@@ -102,7 +108,11 @@ export default function App() {
     setWatched((watched)=> watched.filter((movie)=>movie.imbdId!==id))
   }
   
-
+  //  adding the item into the local storage (watched list)
+  useEffect(function(){
+   localStorage.setItem('watched',JSON.stringify(watched));
+  },[watched])
+  
   useEffect(function(){
     const controller = new AbortController();
       async function fetchMovie(){
@@ -191,7 +201,7 @@ function MovieDetails({selectedId,onCloseMovie,addWatchedMovie,watched}){
   const [userRating,setUserRating] = useState('');
   const isWatched = watched.map((movie)=> movie.imbdId).includes(selectedId);
 
-  const KEY = 'd21d995b';
+  const KEY = 'd21d995b'; // omdb api key 
   const {Title:title,
     Year:year,
     Poster: poster,Runtime: runtime,
@@ -222,12 +232,15 @@ useEffect(function(){
       console.log("Closing..."+e.code)
     }
   }
+  // addEventListener and removeEventListener 
+  // useEffect 
   document.addEventListener('keydown',callBack);
-
+ // clean up function 
   return function(){
     document.removeEventListener('keydown',callBack);
   }
 },[onCloseMovie]);
+// movie data fetching 
   useEffect(function(){
     async function fetchMovieDetails(){
       try{
@@ -319,13 +332,48 @@ function Navbar ({children}){
         );
   }
 function Search({query,setQuery}){
+
+  const inputEl = useRef(null);
+  useEffect(function(){
+    inputEl.current.focus(); // DOM ele => inputEl.current
+    console.log(inputEl);
+    console.log(inputEl.current);
+  },[]);
+
+  // useEffect(function(){
+  //   const el = document.querySelector('.search');
+  //   el.focus();
+  //   console.log(el);
+  // },[]);
   
+  // clicking enter key it will focus and delete the contain from the search bar 
+
+  useEffect(function(){
+    function callBack(e){
+      // selecting the active element (dom)
+      if(document.activeElement === inputEl.current) return;
+      if(e.code==='Enter'){
+        setQuery("");
+        inputEl.current.focus();
+      }
+    }
+    document.addEventListener('keypress',callBack);
+
+    return ()=>{
+      document.removeEventListener('keypress',callBack);
+    }
+
+  },[setQuery]);
+  
+  
+
   return <input
   className="search"
   type="text"
   placeholder="Search movies..."
   value={query}
   onChange={(e) => setQuery(e.target.value)}
+  ref={inputEl}
 />
 }
 function Logo(){
