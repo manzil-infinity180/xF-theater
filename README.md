@@ -3,6 +3,8 @@
 [Project version v1](https://github.com/manzil-infinity180/xF-theater/blob/master/src/AppV1.js)
 
 <img width="1402" alt="Screenshot 2023-12-25 at 1 09 47 PM" src="https://github.com/manzil-infinity180/xF-theater/assets/119070053/e00fe8ef-34a9-4724-96c1-2d59bb55617e">
+
+<br>
 <img width="1402" alt="Screenshot 2023-12-25 at 1 10 45 PM" src="https://github.com/manzil-infinity180/xF-theater/assets/119070053/9b8a3061-b4c1-4f07-8895-fa4ff641ec53">
 
 
