@@ -1,11 +1,11 @@
 :root {
-  --color-primary: #6741d9;
-  --color-primary-light: #7950f2;
+  --color-primary: #745656;
+  --color-primary-light: #000000;
   --color-text: #dee2e6;
   --color-text-dark: #adb5bd;
-  --color-background-100: #343a40;
-  --color-background-500: #2b3035;
-  --color-background-900: #212529;
+  --color-background-100: #745656;
+  --color-background-500: #526272;
+  --color-background-900: #0b0b0b;
   --color-red: #fa5252;
   --color-red-dark: #e03131;
 }
@@ -40,6 +40,7 @@ body {
   background-color: var(--color-primary);
   border-radius: 0.9rem;
 }
+
 
 .main {
   margin-top: 2.4rem;
@@ -79,6 +80,9 @@ body {
   align-items: center;
   gap: 0.8rem;
 }
+.logo:hover{
+  transform: scale(1.15,1.15);
+}
 
 .logo span {
   font-size: 3.2rem;
@@ -103,21 +107,30 @@ body {
   /* background-color: var(--color-background-900); */
   background-color: var(--color-primary-light);
 }
+.search:hover,.search:focus{
+  background: linear-gradient(#393939, #292929);
+  color: rgb(4, 255, 0);
+  outline: wheat;
+  box-shadow: 0 2.4rem 2.4rem rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+        
+}
 
 .search::placeholder {
   color: var(--color-text-dark);
 }
 
-.search:focus {
+/* .search:focus {
   outline: none;
   box-shadow: 0 2.4rem 2.4rem rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
-}
+} */
 
 .num-results {
   justify-self: end;
   font-size: 1.8rem;
 }
+
 
 .btn-toggle {
   position: absolute;
@@ -140,6 +153,7 @@ body {
   padding: 0.8rem 0;
   overflow: scroll;
 }
+
 
 .list-watched {
   height: calc(100% - 9rem);
@@ -196,7 +210,7 @@ body {
   aspect-ratio: 1;
   border-radius: 50%;
   border: none;
-  background-color: var(--color-red);
+  background-color: rgb(2, 255, 2);
   color: var(--color-background-900);
   font-size: 0.9rem;
   font-weight: bold;
@@ -205,7 +219,7 @@ body {
 }
 
 .btn-delete:hover {
-  background-color: var(--color-red-dark);
+  background-color: rgb(255, 0, 0);
 }
 
 /* ******* */
@@ -294,7 +308,7 @@ body {
 .btn-add {
   background-color: var(--color-primary);
   color: var(--color-text);
-  border: none;
+  border: 1px solid black;
   border-radius: 10rem;
   font-size: 1.4rem;
   padding: 1rem;
